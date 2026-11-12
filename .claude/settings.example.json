@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash({{EMAIL_CLI}} primary list *)",
+      "Bash({{EMAIL_CLI}} primary thread-get *)",
+      "Bash({{EMAIL_CLI}} primary message-get *)",
+      "Bash({{EMAIL_CLI}} bookings list *)",
+      "Bash({{EMAIL_CLI}} bookings thread-get *)",
+      "Bash({{EMAIL_CLI}} bookings message-get *)",
+      "Bash({{EMAIL_CLI}} rentals list *)",
+      "Bash({{EMAIL_CLI}} rentals thread-get *)",
+      "Bash({{EMAIL_CLI}} rentals message-get *)",
+      "Bash({{PMS_LOOKUP_TOOL}} *)",
+      "Bash(date -u +%Y-%m-%dT%H:%MZ)",
+      "Edit(./runs/**)",
+      "Edit(./.claude/agent-memory/email-triage/**)"
+    ],
+    "deny": [
+      "Bash({{EMAIL_CLI}} * send *)",
+      "Bash({{EMAIL_CLI}} * draft *)",
+      "Bash({{EMAIL_CLI}} * delete *)",
+      "Bash({{EMAIL_CLI}} * modify *)",
+      "Bash(rm *)",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "WebFetch",
+      "WebSearch",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Edit(./AUTONOMY.md)",
+      "Edit(./.claude/agents/**)",
+      "Edit(./.claude/hooks/**)",
+      "Edit(./.claude/settings*.json)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3",
+            "args": [
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/autonomy-guard.py",
+              "{{PMS_NOTES_TOOL}}"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
